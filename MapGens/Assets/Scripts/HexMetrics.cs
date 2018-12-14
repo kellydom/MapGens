@@ -110,4 +110,31 @@ public static class HexMetrics {
 		position.z += (sample.z * 2f - 1f) * cellPerturbStrength;
 		return position;
 	}
+
+	public const int hashGridSize = 256;
+	static float[] hashGrid;
+
+	public static void InitializeHashGrid (int seed) {
+		hashGrid = new float[hashGridSize * hashGridSize];
+		Random.State currentState = Random.state;
+		Random.InitState (seed);
+		for (int i = 0; i < hashGrid.Length; i++) {
+			hashGrid[i] = Random.value;
+		}
+		Random.state = currentState;
+	}
+
+	public const float hashGridScale = 0.25f;
+
+	public static float SampleHashGrid (Vector3 position) {
+		int x = (int) (position.x * hashGridScale) % hashGridSize;
+		if (x < 0) {
+			x += hashGridSize;
+		}
+		int z = (int) (position.z * hashGridScale) % hashGridSize;
+		if (z < 0) {
+			z += hashGridSize;
+		}
+		return hashGrid[x + z * hashGridSize];
+	}
 }

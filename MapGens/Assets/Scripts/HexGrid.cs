@@ -18,11 +18,21 @@ public class HexGrid : MonoBehaviour {
 
 	HexGridChunk[] chunks;
 
-	void onEnable () {
-		HexMetrics.noiseSource = noiseSource;
+	public int seed;
+
+	void OnEnable () {
+		if (!HexMetrics.noiseSource) {
+			HexMetrics.noiseSource = noiseSource;
+			HexMetrics.InitializeHashGrid (seed);
+		}
+
+		foreach (HexGridChunk chunk in chunks) {
+			chunk.Refresh ();
+		}
 	}
 	void Awake () {
 		HexMetrics.noiseSource = noiseSource;
+		HexMetrics.InitializeHashGrid (seed);
 
 		cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 		cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;

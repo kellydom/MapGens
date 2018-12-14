@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465782, g: 0.49641252, b: 0.5748167, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -652,6 +652,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 108386692847017512, guid: 7796b21ac04c6e1468923b0484c85f75,
+        type: 2}
+      propertyPath: m_Intensity
+      value: 0.75
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7796b21ac04c6e1468923b0484c85f75, type: 2}
   m_IsPrefabAsset: 0
@@ -817,6 +822,7 @@ MonoBehaviour:
   useCollider: 0
   useColors: 0
   useUVCoordinates: 0
+  useUV2Coordinates2: 0
 --- !u!1 &340962857
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,7 +1297,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.75
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -6943,6 +6949,7 @@ MonoBehaviour:
   noiseSource: {fileID: 2800000, guid: 081c3538af0f89245906064ab28cf0de, type: 3}
   chunkPrefab: {fileID: 114924472821413486, guid: 798a3513596d798459d49df9f67a0b1b,
     type: 2}
+  seed: 1234
 --- !u!4 &2056588511
 Transform:
   m_ObjectHideFlags: 0
