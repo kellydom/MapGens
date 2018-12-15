@@ -1,26 +1,13 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour {
-    public Color[] colors;
     public HexGrid hexGrid;
-    private Color activeColor;
-
-    int activeElevation;
-    bool applyColor;
-    bool applyElevation = true;
-    int activeWaterLevel;
-    bool applyWaterLevel = true;
-
-    int brushSize;
 
     bool isDrag;
     HexDirection dragDirection;
     HexCell previousCell;
-
-    void Awake () {
-        SelectColor (0);
-    }
 
     void Update () {
         if (Input.GetMouseButton (0) && !EventSystem.current.IsPointerOverGameObject ()) {
@@ -66,8 +53,8 @@ public class HexMapEditor : MonoBehaviour {
 
     void EditCell (HexCell cell) {
         if (cell) {
-            if (applyColor) {
-                cell.Color = activeColor;
+            if (activeTerrainTypeIndex >= 0) {
+                cell.TerrainTypeIndex = activeTerrainTypeIndex;
             }
             if (applyElevation) {
                 cell.Elevation = activeElevation;
@@ -75,11 +62,26 @@ public class HexMapEditor : MonoBehaviour {
             if (applyWaterLevel) {
                 cell.WaterLevel = activeWaterLevel;
             }
+            if (applyUrbanLevel) {
+                cell.UrbanLevel = activeUrbanLevel;
+            }
+            if (applyFarmLevel) {
+                cell.FarmLevel = activeFarmLevel;
+            }
+            if (applyPlantLevel) {
+                cell.PlantLevel = activePlantLevel;
+            }
+            if (applySpecialIndex) {
+                cell.SpecialIndex = activeSpecialIndex;
+            }
             if (riverMode == OptionalToggle.No) {
                 cell.RemoveRiver ();
             }
             if (roadMode == OptionalToggle.No) {
                 cell.RemoveRoads ();
+            }
+            if (walledMode != OptionalToggle.Ignore) {
+                cell.Walled = walledMode == OptionalToggle.Yes;
             }
             if (isDrag) {
                 HexCell otherCell = cell.GetNeighbor (dragDirection.Opposite ());
@@ -94,6 +96,14 @@ public class HexMapEditor : MonoBehaviour {
             }
         }
     }
+
+    int activeTerrainTypeIndex;
+    public void SetTerrainTypeIndex (int index) {
+        activeTerrainTypeIndex = index;
+    }
+
+    int activeElevation;
+    bool applyElevation = true;
     public void SetApplyElevation (bool toggle) {
         applyElevation = toggle;
     }
@@ -102,6 +112,8 @@ public class HexMapEditor : MonoBehaviour {
         activeElevation = (int) elevation;
     }
 
+    int activeWaterLevel;
+    bool applyWaterLevel = true;
     public void SetApplyWaterLevel (bool toggle) {
         applyWaterLevel = toggle;
     }
@@ -110,13 +122,37 @@ public class HexMapEditor : MonoBehaviour {
         activeWaterLevel = (int) level;
     }
 
-    public void SelectColor (int index) {
-        applyColor = index >= 0;
-        if (applyColor) {
-            activeColor = colors[index];
-        }
+    int activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
+    bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
+    public void SetApplyUrbanLevel (bool toggle) {
+        applyUrbanLevel = toggle;
+    }
+    public void SetUrbanLevel (float level) {
+        activeUrbanLevel = (int) level;
     }
 
+    public void SetApplyFarmLevel (bool toggle) {
+        applyFarmLevel = toggle;
+    }
+    public void SetFarmLevel (float level) {
+        activeFarmLevel = (int) level;
+    }
+
+    public void SetApplyPlantLevel (bool toggle) {
+        applyPlantLevel = toggle;
+    }
+    public void SetPlantLevel (float level) {
+        activePlantLevel = (int) level;
+    }
+
+    public void SetApplySpecialLevel (bool toggle) {
+        applySpecialIndex = toggle;
+    }
+    public void SetSpecialLevel (float level) {
+        activeSpecialIndex = (int) level;
+    }
+
+    int brushSize;
     public void SetBrushSize (float size) {
         brushSize = (int) size;
     }
@@ -130,13 +166,17 @@ public class HexMapEditor : MonoBehaviour {
         Yes,
         No
     }
-    OptionalToggle riverMode, roadMode;
+    OptionalToggle riverMode, roadMode, walledMode;
     public void SetRiverMode (int mode) {
         riverMode = (OptionalToggle) mode;
     }
 
     public void SetRoadMode (int mode) {
         roadMode = (OptionalToggle) mode;
+    }
+
+    public void SetWalledMode (int mode) {
+        walledMode = (OptionalToggle) mode;
     }
 
     void ValidateDrag (HexCell currentCell) {
