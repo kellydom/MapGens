@@ -415,6 +415,25 @@ public class HexCell : MonoBehaviour {
 		chunk.Refresh ();
 	}
 
+	public HexCell PathFrom { get; set; }
+	public HexCell NextWithSamePriority { get; set; }
+	public int SearchHeuristic { get; set; }
+	public int SearchPriority {
+		get {
+			return distance + SearchHeuristic;
+		}
+	}
+	public void DisableHighlight () {
+		Image highlight = uiRect.GetChild (0).GetComponent<Image> ();
+		highlight.enabled = false;
+	}
+
+	public void EnableHighlight (Color color) {
+		Image highlight = uiRect.GetChild (0).GetComponent<Image> ();
+		highlight.color = color;
+		highlight.enabled = true;
+	}
+
 	public void Save (BinaryWriter writer) {
 		writer.Write ((byte) terrainTypeIndex);
 		writer.Write ((byte) elevation);
