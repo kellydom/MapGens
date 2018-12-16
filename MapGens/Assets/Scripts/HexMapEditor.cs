@@ -4,11 +4,15 @@ using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour {
     public HexGrid hexGrid;
+    public Material terrainMaterial;
 
     bool isDrag;
     HexDirection dragDirection;
     HexCell previousCell;
 
+    void Awake () {
+        terrainMaterial.DisableKeyword ("GRID_ON");
+    }
     void Update () {
         if (Input.GetMouseButton (0) && !EventSystem.current.IsPointerOverGameObject ()) {
             HandleInput ();
@@ -28,7 +32,11 @@ public class HexMapEditor : MonoBehaviour {
             } else {
                 isDrag = false;
             }
-            EditCells (currentCell);
+            if (editMode) {
+                EditCells (currentCell);
+            } else {
+                hexGrid.FindDistancesTo (currentCell);
+            }
             previousCell = currentCell;
         } else {
             previousCell = null;
@@ -157,10 +165,6 @@ public class HexMapEditor : MonoBehaviour {
         brushSize = (int) size;
     }
 
-    public void ShowUI (bool visible) {
-        hexGrid.ShowUI (visible);
-    }
-
     enum OptionalToggle {
         Ignore,
         Yes,
@@ -187,5 +191,19 @@ public class HexMapEditor : MonoBehaviour {
             }
         }
         isDrag = false;
+    }
+
+    public void ShowGrid (bool visible) {
+        if (visible) {
+            terrainMaterial.EnableKeyword ("GRID_ON");
+        } else {
+            terrainMaterial.DisableKeyword ("GRID_ON");
+        }
+    }
+
+    bool editMode;
+    public void SetEditMode (bool toggle) {
+        editMode = toggle;
+        hexGrid.ShowUI (!toggle);
     }
 }

@@ -27,6 +27,9 @@ public class HexMapCamera : MonoBehaviour {
 	}
 
 	void Update () {
+		if (!instance) {
+			instance = this;
+		}
 		float zoomDelta = Input.GetAxis ("Mouse ScrollWheel");
 		if (zoomDelta != 0f) {
 			AdjustZoom (zoomDelta);

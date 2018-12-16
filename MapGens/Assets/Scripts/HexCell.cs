@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour {
 	public HexCoordinates coordinates;
@@ -12,6 +13,21 @@ public class HexCell : MonoBehaviour {
 		get {
 			return transform.localPosition;
 		}
+	}
+
+	int distance;
+	public int Distance {
+		get {
+			return distance;
+		}
+		set {
+			distance = value;
+			UpdateDistanceLabel ();
+		}
+	}
+	void UpdateDistanceLabel () {
+		Text label = uiRect.GetComponent<Text> ();
+		label.text = distance == int.MaxValue ? "" : distance.ToString ();
 	}
 
 	void RefreshPosition () {
