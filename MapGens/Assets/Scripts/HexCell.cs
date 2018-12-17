@@ -15,6 +15,8 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
+	public HexUnit Unit { get; set; }
+
 	int distance;
 	public int Distance {
 		get {
@@ -22,12 +24,12 @@ public class HexCell : MonoBehaviour {
 		}
 		set {
 			distance = value;
-			UpdateDistanceLabel ();
 		}
 	}
-	void UpdateDistanceLabel () {
+
+	public void SetLabel (string text) {
 		Text label = uiRect.GetComponent<Text> ();
-		label.text = distance == int.MaxValue ? "" : distance.ToString ();
+		label.text = text;
 	}
 
 	void RefreshPosition () {
@@ -408,13 +410,20 @@ public class HexCell : MonoBehaviour {
 					neighbor.chunk.Refresh ();
 				}
 			}
+			if (Unit) {
+				Unit.ValidationLocation ();
+			}
 		}
 	}
 
 	void RefreshSelfOnly () {
 		chunk.Refresh ();
+		if (Unit) {
+			Unit.ValidationLocation ();
+		}
 	}
 
+	#region Search 
 	public HexCell PathFrom { get; set; }
 	public HexCell NextWithSamePriority { get; set; }
 	public int SearchHeuristic { get; set; }
@@ -423,6 +432,7 @@ public class HexCell : MonoBehaviour {
 			return distance + SearchHeuristic;
 		}
 	}
+	public int SearchPhase { get; set; }
 	public void DisableHighlight () {
 		Image highlight = uiRect.GetChild (0).GetComponent<Image> ();
 		highlight.enabled = false;
@@ -433,7 +443,9 @@ public class HexCell : MonoBehaviour {
 		highlight.color = color;
 		highlight.enabled = true;
 	}
+	#endregion
 
+	#region Save/Load 
 	public void Save (BinaryWriter writer) {
 		writer.Write ((byte) terrainTypeIndex);
 		writer.Write ((byte) elevation);
@@ -499,4 +511,5 @@ public class HexCell : MonoBehaviour {
 			roads[i] = (roadFlags & (1 << i)) != 0;
 		}
 	}
+	#endregion
 }
