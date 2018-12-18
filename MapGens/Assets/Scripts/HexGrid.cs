@@ -23,6 +23,8 @@ public class HexGrid : MonoBehaviour {
 
 	public int seed;
 
+	HexCellShaderData cellShaderData;
+
 	void OnEnable () {
 		if (!HexMetrics.noiseSource) {
 			HexMetrics.noiseSource = noiseSource;
@@ -38,6 +40,8 @@ public class HexGrid : MonoBehaviour {
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid (seed);
 		HexUnit.unitPrefab = unitPrefab;
+
+		cellShaderData = gameObject.AddComponent<HexCellShaderData> ();
 
 		CreateMap (cellCountX, cellCountZ);
 	}
@@ -64,6 +68,8 @@ public class HexGrid : MonoBehaviour {
 		cellCountZ = z;
 		chunkCountX = cellCountX / HexMetrics.chunkSizeX;
 		chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
+
+		cellShaderData.Initialize (cellCountX, cellCountZ);
 
 		CreateChunks ();
 		CreateCells ();
@@ -294,6 +300,8 @@ public class HexGrid : MonoBehaviour {
 		HexCell cell = cells[i] = Instantiate<HexCell> (cellPrefab);
 		cell.transform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates (x, z);
+		cell.Index = i;
+		cell.ShaderData = cellShaderData;
 
 		if (x > 0) {
 			cell.SetNeighbor (HexDirection.W, cells[i - 1]);
