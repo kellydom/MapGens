@@ -35,16 +35,56 @@ public class HexCell : MonoBehaviour {
 		label.text = text;
 	}
 
-	void RefreshPosition () {
-		Vector3 position = transform.localPosition;
-		position.y = elevation * HexMetrics.elevationStep;
-		position.y += (HexMetrics.SampleNoise (position).y * 2f - 1f) * HexMetrics.elevationPerturbStrength;
-		transform.localPosition = position;
+	#region Visibility 
 
-		Vector3 uiPosition = uiRect.localPosition;
-		uiPosition.z = -position.y;
-		uiRect.localPosition = uiPosition;
+	public bool Explorable { get; set; }
+
+	public int ViewElevation {
+		get {
+			return elevation >= waterLevel ? elevation : waterLevel;
+		}
 	}
+
+	bool explored;
+	public bool IsExplored {
+		get {
+			return explored && Explorable;
+		}
+		private set {
+			explored = value;
+		}
+	}
+
+	int visibility;
+	public bool IsVisible {
+		get {
+			return visibility > 0 && Explorable;
+		}
+	}
+
+	public void IncreaseVisibility () {
+		visibility += 1;
+		if (visibility == 1) {
+			IsExplored = true;
+			ShaderData.RefreshVisibility (this);
+		}
+	}
+
+	public void DecreaseVisibility () {
+		visibility -= 1;
+		if (visibility == 0) {
+			ShaderData.RefreshVisibility (this);
+		}
+	}
+
+	public void ResetVisibility () {
+		if (visibility > 0) {
+			visibility = 0;
+			ShaderData.RefreshVisibility (this);
+		}
+	}
+
+	#endregion
 
 	#region Elevation 
 	int elevation = int.MinValue;
@@ -57,7 +97,11 @@ public class HexCell : MonoBehaviour {
 				return;
 			}
 
+			int originalViewElevation = ViewElevation;
 			elevation = value;
+			if (ViewElevation != originalViewElevation) {
+				ShaderData.ViewElevationChanged ();
+			}
 			RefreshPosition ();
 			ValidateRivers ();
 
@@ -263,7 +307,12 @@ public class HexCell : MonoBehaviour {
 			if (waterLevel == value) {
 				return;
 			}
+
+			int originalViewElevation = ViewElevation;
 			waterLevel = value;
+			if (ViewElevation != originalViewElevation) {
+				ShaderData.ViewElevationChanged ();
+			}
 			ValidateRivers ();
 			Refresh ();
 		}
@@ -404,6 +453,7 @@ public class HexCell : MonoBehaviour {
 
 	#endregion
 
+	#region Refresh 
 	void Refresh () {
 		if (chunk) {
 			chunk.Refresh ();
@@ -425,6 +475,18 @@ public class HexCell : MonoBehaviour {
 			Unit.ValidationLocation ();
 		}
 	}
+
+	void RefreshPosition () {
+		Vector3 position = transform.localPosition;
+		position.y = elevation * HexMetrics.elevationStep;
+		position.y += (HexMetrics.SampleNoise (position).y * 2f - 1f) * HexMetrics.elevationPerturbStrength;
+		transform.localPosition = position;
+
+		Vector3 uiPosition = uiRect.localPosition;
+		uiPosition.z = -position.y;
+		uiRect.localPosition = uiPosition;
+	}
+	#endregion
 
 	#region Search 
 	public HexCell PathFrom { get; set; }
@@ -451,7 +513,7 @@ public class HexCell : MonoBehaviour {
 	#region Save/Load 
 	public void Save (BinaryWriter writer) {
 		writer.Write ((byte) terrainTypeIndex);
-		writer.Write ((byte) elevation);
+		writer.Write ((byte) (elevation + 127));
 		writer.Write ((byte) waterLevel);
 		writer.Write ((byte) urbanLevel);
 		writer.Write ((byte) farmLevel);
@@ -479,12 +541,17 @@ public class HexCell : MonoBehaviour {
 			}
 		}
 		writer.Write ((byte) roadFlags);
+
+		writer.Write (IsExplored);
 	}
 
-	public void Load (BinaryReader reader) {
+	public void Load (BinaryReader reader, int header) {
 		terrainTypeIndex = reader.ReadByte ();
 		ShaderData.RefreshTerrain (this);
 		elevation = reader.ReadByte ();
+		if (header >= 4) {
+			elevation -= 127;
+		}
 		RefreshPosition ();
 		waterLevel = reader.ReadByte ();
 		urbanLevel = reader.ReadByte ();
@@ -514,6 +581,8 @@ public class HexCell : MonoBehaviour {
 		for (int i = 0; i < roads.Length; i++) {
 			roads[i] = (roadFlags & (1 << i)) != 0;
 		}
+		IsExplored = header >= 3 ? reader.ReadBoolean () : false;
+		ShaderData.RefreshVisibility (this);
 	}
 	#endregion
 }
