@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028377, g: 0.22571409, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1535,7 +1535,7 @@ Prefab:
     - target: {fileID: 108386692847017512, guid: 7796b21ac04c6e1468923b0484c85f75,
         type: 2}
       propertyPath: m_Intensity
-      value: 0.75
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7796b21ac04c6e1468923b0484c85f75, type: 2}
@@ -2768,7 +2768,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.75
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -4000,7 +4000,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 2000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -9603,7 +9603,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1422011936}
-  - component: {fileID: 1422011935}
+  - component: {fileID: 1422011937}
   m_Layer: 0
   m_Name: Hex Map Generator
   m_TagString: Untagged
@@ -9611,27 +9611,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1422011935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1422011934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8906f543028f0ae4090a8fabde1210d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grid: {fileID: 2056588510}
-  jitterProbability: 0.25
-  chunkSizeMin: 30
-  chunkSizeMax: 100
-  landPercentage: 50
-  waterLevel: 3
-  highRiseProbability: 0.25
-  sinkProbability: 0.2
-  elevationMinimum: -2
-  elevationMaximum: 8
 --- !u!4 &1422011936
 Transform:
   m_ObjectHideFlags: 0
@@ -9645,6 +9624,47 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1422011937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1422011934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ce9de9c7694b42c9ac45ddfca692a98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 2056588510}
+  useFixedSeed: 0
+  seed: 0
+  jitterProbability: 0.25
+  chunkSizeMin: 30
+  chunkSizeMax: 100
+  highRiseProbability: 0.25
+  sinkProbability: 0.2
+  landPercentage: 50
+  waterLevel: 3
+  elevationMinimum: -2
+  elevationMaximum: 8
+  mapBorderX: 5
+  mapBorderZ: 5
+  regionBorder: 5
+  regionCount: 1
+  erosionPercentage: 50
+  startingMoisture: 0.1
+  evaporationFactor: 0.5
+  precipitationFactor: 0.25
+  runOffFactor: 0.25
+  seepageFactor: 0.125
+  windDirection: 5
+  windStrength: 4
+  riverPercentage: 10
+  extraLakeProbability: 0.25
+  lowTemperature: 0
+  highTemperature: 1
+  hemisphere: 0
+  temperatureJitter: 0.1
 --- !u!1 &1424754333
 GameObject:
   m_ObjectHideFlags: 0
@@ -10704,7 +10724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexGrid: {fileID: 2056588510}
-  mapGenerator: {fileID: 1422011935}
+  mapGenerator: {fileID: 1422011937}
 --- !u!1 &1543075117
 GameObject:
   m_ObjectHideFlags: 0

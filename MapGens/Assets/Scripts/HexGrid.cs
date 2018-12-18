@@ -34,7 +34,7 @@ public class HexGrid : MonoBehaviour {
 		}
 
 		foreach (HexGridChunk chunk in chunks) {
-			chunk.Refresh ();
+			//chunk.Refresh ();
 		}
 	}
 	void Awake () {
